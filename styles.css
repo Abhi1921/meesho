@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Meesho Multi-Page Showcase & Link Engine - Full Stylesheet
+   Meesho Section Link Showcase - Complete Stylesheet with Admin Gate
    Brand Colors: Meesho Pink (#f43397), Deep Purple (#9f208c), Green (#038d63)
    ========================================================================== */
 
@@ -47,7 +47,7 @@ a {
 }
 
 /* ==========================================================================
-   1. TOP NAVIGATION & HEADER
+   1. TOP NAVIGATION & CATEGORY TAB BAR
    ========================================================================== */
 .meesho-header {
   position: sticky;
@@ -90,7 +90,7 @@ a {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .nav-link {
@@ -100,17 +100,23 @@ a {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .nav-link:hover, .nav-link.active {
   color: var(--meesho-pink);
 }
 
-.nav-divider {
-  width: 1px;
-  height: 20px;
-  background: #e0e0e0;
+.nav-link.admin-active-link {
+  background: #e6f7f1;
+  color: var(--meesho-green);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  border: 1px solid #b2e2d3;
 }
 
 .action-badge-count {
@@ -122,7 +128,7 @@ a {
   border-radius: 10px;
 }
 
-/* Sub Navigation A to Z Categories Bar */
+/* Sub Navigation Category Bar */
 .category-nav-bar {
   border-top: 1px solid #f0f0f0;
   border-bottom: 1px solid #f0f0f0;
@@ -160,7 +166,7 @@ a {
 }
 
 /* ==========================================================================
-   2. HERO ADD LINK FORM CARD
+   2. HERO ADD LINK FORM CARD & LOCK OVERLAY
    ========================================================================== */
 .add-link-section {
   max-width: 1280px;
@@ -174,6 +180,73 @@ a {
   border-radius: 16px;
   padding: 24px 30px;
   box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-link-card.admin-locked {
+  user-select: none;
+}
+
+/* Admin Lock Overlay */
+.admin-lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(5px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.lock-overlay-content {
+  max-width: 450px;
+}
+
+.lock-icon-circle {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.lock-overlay-content h3 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--meesho-purple);
+  margin-bottom: 6px;
+}
+
+.lock-overlay-content p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.lock-overlay-content code {
+  background: #fdf0f7;
+  color: var(--meesho-pink);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.unlock-btn-sm {
+  background: linear-gradient(135deg, var(--meesho-pink) 0%, var(--meesho-purple) 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(244, 51, 151, 0.3);
 }
 
 .card-header-flex {
@@ -363,9 +436,7 @@ a {
   gap: 10px;
 }
 
-.sec-icon {
-  font-size: 24px;
-}
+.sec-icon { font-size: 24px; }
 
 .sec-name {
   font-family: var(--font-heading);
@@ -567,252 +638,134 @@ a {
 }
 
 /* ==========================================================================
-   4. SUB-PAGE LAYOUTS (SUPPLIER, HELP, CART)
+   4. ADMIN AUTHENTICATION MODAL
    ========================================================================== */
-
-/* Supplier Page Styles */
-.supplier-hero {
-  background: linear-gradient(135deg, #6c1960 0%, #9f208c 50%, #f43397 100%);
-  color: #ffffff;
-  padding: 60px 20px;
-  text-align: center;
-  border-radius: 20px;
-  margin: 24px auto;
-  max-width: 1280px;
-  box-shadow: var(--shadow-lg);
-}
-
-.supplier-hero h1 {
-  font-family: var(--font-heading);
-  font-size: 40px;
-  font-weight: 900;
-  margin-bottom: 12px;
-}
-
-.supplier-hero p {
-  font-size: 18px;
-  max-width: 650px;
-  margin: 0 auto 28px;
-  opacity: 0.95;
-}
-
-.cta-button-lg {
-  display: inline-flex;
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.admin-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.admin-modal-box {
   background: #ffffff;
-  color: var(--meesho-purple);
+  border-radius: 20px;
+  padding: 32px 28px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.admin-modal-overlay.show .admin-modal-box {
+  transform: translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: transparent;
+  border: none;
   font-size: 18px;
-  font-weight: 800;
-  padding: 14px 36px;
-  border-radius: 30px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  transition: all 0.2s ease;
+  color: #888;
+  cursor: pointer;
 }
 
-.cta-button-lg:hover {
-  background: #ffeb3b;
-  transform: translateY(-3px);
-}
-
-.feature-cards-grid {
-  max-width: 1280px;
-  margin: 40px auto;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.feature-card {
-  background: #ffffff;
-  padding: 30px 24px;
-  border-radius: 16px;
-  border: 1px solid #eaeaea;
-  box-shadow: var(--shadow-sm);
+.admin-modal-header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-.feature-icon-box {
-  width: 64px;
-  height: 64px;
+.admin-badge-circle {
+  width: 56px;
+  height: 56px;
   background: #fdf0f7;
-  color: var(--meesho-pink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 16px;
+  font-size: 26px;
+  margin: 0 auto 12px;
 }
 
-.feature-card h3 {
+.admin-modal-header h2 {
   font-family: var(--font-heading);
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.feature-card p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
-}
-
-/* Help Page Styles */
-.help-hero {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 40px 20px;
-  text-align: center;
-  max-width: 1280px;
-  margin: 24px auto;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #eee;
-}
-
-.help-hero h1 {
-  font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-}
-
-.faq-section {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 0 16px;
-}
-
-.faq-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  margin-bottom: 14px;
-  overflow: hidden;
-}
-
-.faq-question {
-  padding: 18px 24px;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-}
-
-.faq-answer {
-  padding: 0 24px 18px;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.6;
-  border-top: 1px solid #f5f5f5;
-  padding-top: 14px;
-}
-
-/* Cart / Saved Links Page Styles */
-.cart-wrapper {
-  max-width: 1100px;
-  margin: 32px auto;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-}
-
-.cart-items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.cart-item-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #eee;
-}
-
-.cart-item-img {
-  width: 90px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 10px;
-  background: #f0f0f5;
-}
-
-.cart-item-details {
-  flex: 1;
-}
-
-.cart-item-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
+  color: var(--meesho-purple);
   margin-bottom: 6px;
 }
 
-.cart-item-price {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--meesho-pink);
-}
-
-.cart-summary-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #eee;
-  height: fit-content;
-}
-
-.summary-title {
-  font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 12px;
+.admin-modal-header p {
+  font-size: 13px;
   color: #666;
+  line-height: 1.4;
 }
 
-.summary-total {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text-primary);
-  border-top: 1px solid #eee;
-  padding-top: 12px;
-  margin-top: 12px;
+.password-field-wrap {
+  margin-bottom: 14px;
 }
 
-.checkout-btn {
-  display: block;
+.admin-pwd-input {
   width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e8;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  font-family: var(--font-main);
+  transition: border-color 0.2s ease;
+}
+
+.admin-pwd-input:focus {
+  border-color: var(--meesho-pink);
+  box-shadow: 0 0 0 3px rgba(244, 51, 151, 0.15);
+}
+
+.admin-error-text {
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: none;
   text-align: center;
+}
+
+.admin-submit-btn {
+  width: 100%;
   background: linear-gradient(135deg, var(--meesho-pink) 0%, var(--meesho-purple) 100%);
   color: #ffffff;
-  font-weight: 800;
   font-size: 15px;
+  font-weight: 800;
   padding: 14px;
+  border: none;
   border-radius: 10px;
-  margin-top: 20px;
+  cursor: pointer;
   box-shadow: 0 4px 14px rgba(244, 51, 151, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.admin-submit-btn:hover {
+  transform: translateY(-2px);
 }
 
 /* Toast */
@@ -856,6 +809,6 @@ a {
 }
 
 @media (max-width: 900px) {
-  .cart-wrapper { grid-template-columns: 1fr; }
   .link-input-group { flex-direction: column; }
+  .optional-fields-grid { grid-template-columns: 1fr; }
 }

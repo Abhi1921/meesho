@@ -24,6 +24,9 @@
         <a href="supplier.html" class="nav-link">Become a Supplier</a>
         <a href="help.html" class="nav-link">Help Center</a>
         <a href="cart.html" class="nav-link">Saved Links <span id="cartCountNav" class="action-badge-count">0</span></a>
+        
+        <button id="adminHeaderBtn" class="nav-link" onclick="openAdminModal()">🔒 Admin Login</button>
+
         <a href="https://www.meesho.com" target="_blank" class="nav-link" style="color: var(--meesho-pink);">Visit Meesho.com ↗</a>
       </div>
     </div>
@@ -51,7 +54,17 @@
 
   <!-- ================= ADD MEESHO LINK CARD (HERO FORM) ================= -->
   <section class="add-link-section">
-    <div class="add-link-card">
+    <div class="add-link-card admin-locked">
+      <!-- Admin Lock Overlay -->
+      <div id="addFormLockOverlay" class="admin-lock-overlay" onclick="openAdminModal()">
+        <div class="lock-overlay-content">
+          <div class="lock-icon-circle">🔒</div>
+          <h3>Admin Control Protected</h3>
+          <p>Click to enter Admin Password (<code>Abhishek@123</code>) to unlock link pasting & product management.</p>
+          <button class="unlock-btn-sm" onclick="openAdminModal()">Unlock Admin Controls 🔑</button>
+        </div>
+      </div>
+
       <div class="card-header-flex">
         <h1 class="add-title">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="2.5">
@@ -80,7 +93,6 @@
           </button>
         </div>
 
-        <!-- Optional custom inputs -->
         <div class="optional-fields-grid">
           <input type="text" id="customTitleInput" class="sub-input" placeholder="Optional: Custom Product Title (leave empty for auto-fetch)">
           <input type="url" id="customImageInput" class="sub-input" placeholder="Optional: Custom Image URL (leave empty for exact Meesho photo)">
@@ -98,12 +110,32 @@
         <h2 class="catalog-title">Meesho Category Sections <span id="totalItemsCount" class="count-badge">0 Links</span></h2>
         <p style="font-size: 13px; color: #666; margin-top: 2px;">Products are organized inside their respective sections with target links underneath</p>
       </div>
-      <button class="clear-all-btn" onclick="clearAllProducts()">Clear All Saved Links</button>
+      <button class="clear-all-btn" style="display:none;" onclick="clearAllProducts()">Clear All Saved Links</button>
     </div>
 
     <!-- Category Sections Container -->
     <div id="sectionsContainer" class="sections-container"></div>
   </main>
+
+  <!-- ================= ADMIN PASSWORD MODAL ================= -->
+  <div id="adminModal" class="admin-modal-overlay">
+    <div class="admin-modal-box">
+      <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
+      <div class="admin-modal-header">
+        <div class="admin-badge-circle">🔐</div>
+        <h2>Admin Authentication</h2>
+        <p>Enter Admin Password to enable link pasting, product deletion, and section controls.</p>
+      </div>
+      
+      <form onsubmit="submitAdminPassword(event)">
+        <div class="password-field-wrap">
+          <input type="password" id="adminPasswordInput" class="admin-pwd-input" placeholder="Enter password (Abhishek@123)" required autocomplete="current-password">
+        </div>
+        <div id="adminModalError" class="admin-error-text"></div>
+        <button type="submit" class="admin-submit-btn">Unlock Admin Access →</button>
+      </form>
+    </div>
+  </div>
 
   <!-- Toast Notification -->
   <div id="redirectToast" class="redirect-toast">

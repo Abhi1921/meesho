@@ -1,10 +1,12 @@
 /**
- * Meesho Multi-Page Link Engine & Scraper
- * Handles dynamic product listing across sections, cart management,
- * OpenGraph metadata fetching, and page interactions.
+ * Meesho Multi-Page Link Engine & Scraper with Admin Password Gate
+ * Password: Abhishek@123
+ * Only authenticated admin can add links, delete products, or clear sections.
  */
 
 const STORAGE_KEY = "meesho_section_products_v2";
+const ADMIN_SESSION_KEY = "meesho_admin_unlocked_v1";
+const SECRET_PASSWORD = "Abhishek@123";
 
 const CATEGORIES = [
   { id: "Ethnic Wear", name: "Kurti, Saree & Lehenga", icon: "🌸" },
@@ -70,7 +72,116 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFormListeners();
   renderCartPage();
   setupFaqAccordion();
+  updateAdminUI();
 });
+
+/**
+ * Check if Admin mode is active
+ */
+function isAdminLoggedIn() {
+  return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+}
+
+/**
+ * Prompt & Login Admin using secret password Abhishek@123
+ */
+function openAdminModal() {
+  if (isAdminLoggedIn()) {
+    if (confirm("Logout from Admin Mode?")) {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      updateAdminUI();
+      renderAllSections();
+      renderCartPage();
+      showToast("🔒 Admin Mode Locked");
+    }
+    return;
+  }
+
+  const modal = document.getElementById("adminModal");
+  if (modal) {
+    modal.classList.add("show");
+    const input = document.getElementById("adminPasswordInput");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+  } else {
+    // Fallback prompt
+    const pwd = prompt("Enter Admin Password to Unlock Link Editing:");
+    verifyAndLogin(pwd);
+  }
+}
+
+function closeAdminModal() {
+  const modal = document.getElementById("adminModal");
+  if (modal) modal.classList.remove("show");
+}
+
+function submitAdminPassword(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById("adminPasswordInput");
+  const pwd = input ? input.value.trim() : "";
+  verifyAndLogin(pwd);
+}
+
+function verifyAndLogin(pwd) {
+  if (pwd === SECRET_PASSWORD) {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+    closeAdminModal();
+    updateAdminUI();
+    renderAllSections();
+    renderCartPage();
+    showToast("🔓 Admin Mode Unlocked!");
+  } else {
+    showAdminError("Incorrect Password! Access Denied.");
+  }
+}
+
+function showAdminError(msg) {
+  const errEl = document.getElementById("adminModalError");
+  if (errEl) {
+    errEl.textContent = msg;
+    errEl.style.display = "block";
+  } else {
+    alert(msg);
+  }
+}
+
+/**
+ * Update Admin Status Controls across Header & Form
+ */
+function updateAdminUI() {
+  const isAdmin = isAdminLoggedIn();
+
+  // Header button
+  const adminBtn = document.getElementById("adminHeaderBtn");
+  if (adminBtn) {
+    adminBtn.innerHTML = isAdmin 
+      ? `🔓 Admin Unlocked (Logout)` 
+      : `🔒 Admin Login`;
+    adminBtn.className = isAdmin ? `nav-link admin-active-link` : `nav-link`;
+  }
+
+  // Add Link Form Container
+  const formCard = document.querySelector(".add-link-card");
+  const lockOverlay = document.getElementById("addFormLockOverlay");
+  
+  if (formCard) {
+    if (isAdmin) {
+      formCard.classList.remove("admin-locked");
+      if (lockOverlay) lockOverlay.style.display = "none";
+    } else {
+      formCard.classList.add("admin-locked");
+      if (lockOverlay) lockOverlay.style.display = "flex";
+    }
+  }
+
+  // Clear All Links Button
+  const clearBtn = document.querySelector(".clear-all-btn");
+  if (clearBtn) {
+    clearBtn.style.display = isAdmin ? "inline-block" : "none";
+  }
+}
 
 function loadProducts() {
   const saved = localStorage.getItem(STORAGE_KEY);
@@ -128,7 +239,7 @@ function renderAllSections() {
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
         <h3>No Links Listed for this Category</h3>
-        <p>Paste any Meesho product link above to list it under this section!</p>
+        <p>Unlock Admin Mode (Password: Abhishek@123) to add new Meesho links!</p>
       </div>
     `;
     return;
@@ -169,18 +280,21 @@ function renderAllSections() {
 }
 
 function renderProductCard(item) {
+  const isAdmin = isAdminLoggedIn();
   const priceDisplay = item.price ? `₹${item.price}` : 'Check Price on Meesho';
   const originalPriceDisplay = item.originalPrice ? `₹${item.originalPrice}` : '';
   const discountDisplay = item.discount || (item.originalPrice && item.price ? `${Math.round((1 - item.price/item.originalPrice)*100)}% off` : '');
 
   return `
     <div class="product-card">
-      <button class="delete-card-btn" title="Delete Link" onclick="deleteProduct('${item.id}')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-      </button>
+      ${isAdmin ? `
+        <button class="delete-card-btn" title="Delete Link (Admin)" onclick="deleteProduct('${item.id}')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      ` : ''}
 
       <div class="product-img-container" onclick="openLink('${escapeQuotes(item.link)}')">
         <img src="${item.image}" alt="${escapeQuotes(item.title)}" class="product-img" loading="lazy"
@@ -222,23 +336,17 @@ function renderProductCard(item) {
   `;
 }
 
-/**
- * Render Cart Page (cart.html)
- */
 function renderCartPage() {
+  const isAdmin = isAdminLoggedIn();
   const cartList = document.getElementById("cartItemsList");
   const countEl = document.getElementById("summaryCount");
   const totalEl = document.getElementById("summaryTotal");
 
   if (!cartList) return;
-
   if (countEl) countEl.textContent = `${productsList.length} Items`;
 
   let totalPrice = 0;
-  productsList.forEach(p => {
-    if (p.price) totalPrice += parseInt(p.price);
-  });
-
+  productsList.forEach(p => { if (p.price) totalPrice += parseInt(p.price); });
   if (totalEl) totalEl.textContent = `₹${totalPrice}`;
 
   if (productsList.length === 0) {
@@ -263,14 +371,11 @@ function renderCartPage() {
         </div>
       </div>
 
-      <button class="delete-card-btn" style="position:static;" onclick="deleteProduct('${item.id}')">✕</button>
+      ${isAdmin ? `<button class="delete-card-btn" style="position:static;" onclick="deleteProduct('${item.id}')">✕</button>` : ''}
     </div>
   `).join('');
 }
 
-/**
- * Setup FAQ Accordions on help.html
- */
 function setupFaqAccordion() {
   document.querySelectorAll(".faq-question").forEach(q => {
     q.addEventListener("click", () => {
@@ -280,9 +385,6 @@ function setupFaqAccordion() {
   });
 }
 
-/**
- * Form Listener & Fetcher
- */
 function setupFormListeners() {
   const form = document.getElementById("addLinkForm");
   const linkInput = document.getElementById("meeshoUrlInput");
@@ -291,6 +393,13 @@ function setupFormListeners() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (!isAdminLoggedIn()) {
+      openAdminModal();
+      showAdminError("Please enter password (Abhishek@123) to add links!");
+      return;
+    }
+
     const url = linkInput.value.trim();
 
     if (!url || !url.toLowerCase().includes("meesho.com")) {
@@ -335,7 +444,6 @@ function setupFormListeners() {
     showToast(`Added to ${category} section!`);
   });
 
-  // Tab filters
   document.querySelectorAll('[data-sec-tab]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('[data-sec-tab]').forEach(b => b.classList.remove('active'));
@@ -440,14 +548,26 @@ function getCategoryIcon(catId) {
 }
 
 function deleteProduct(id) {
-  productsList = productsList.filter(p => p.id !== id);
-  saveProducts();
-  renderAllSections();
-  renderCartPage();
-  showToast("Link deleted.");
+  if (!isAdminLoggedIn()) {
+    openAdminModal();
+    showAdminError("Please enter password (Abhishek@123) to delete links!");
+    return;
+  }
+  if (confirm("Delete this Meesho product link?")) {
+    productsList = productsList.filter(p => p.id !== id);
+    saveProducts();
+    renderAllSections();
+    renderCartPage();
+    showToast("Link deleted.");
+  }
 }
 
 function clearAllProducts() {
+  if (!isAdminLoggedIn()) {
+    openAdminModal();
+    showAdminError("Please enter password (Abhishek@123) to clear links!");
+    return;
+  }
   if (confirm("Clear all saved product links?")) {
     productsList = [];
     saveProducts();
