@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meesho Link Manager & Showcase | Meesho Product Link Generator</title>
-  <meta name="description" content="Paste Meesho product links, fetch product pictures, and showcase products with target redirect links.">
+  <title>Online Shopping Site for Fashion, Electronics, Home & More | Meesho Link Manager</title>
+  <meta name="description" content="Add Meesho product links into sections, auto-fetch exact product pictures and prices, and list target links.">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="https://www.meesho.com/favicon.ico" type="image/x-icon">
 </head>
@@ -24,9 +24,25 @@
         <a href="https://supplier.meesho.com" target="_blank" class="nav-link">Become a Supplier</a>
       </div>
     </div>
+
+    <!-- Category Filter Bar -->
+    <nav class="category-nav-bar">
+      <div class="category-nav-container">
+        <div class="cat-tab active" data-sec-tab="All">All Sections</div>
+        <div class="cat-tab" data-sec-tab="Ethnic Wear">🌸 Ethnic Wear</div>
+        <div class="cat-tab" data-sec-tab="Western">👗 Women Western</div>
+        <div class="cat-tab" data-sec-tab="Menswear">👔 Menswear & Grooming</div>
+        <div class="cat-tab" data-sec-tab="Beauty">💄 Beauty & Health</div>
+        <div class="cat-tab" data-sec-tab="Footwear">👠 Bags & Footwear</div>
+        <div class="cat-tab" data-sec-tab="Home">🏠 Home & Kitchen</div>
+        <div class="cat-tab" data-sec-tab="Jewellery">💎 Jewellery & Accessories</div>
+        <div class="cat-tab" data-sec-tab="Electronics">⌚ Electronics & Watches</div>
+        <div class="cat-tab" data-sec-tab="Kids">🧸 Kids & Toys</div>
+      </div>
+    </nav>
   </header>
 
-  <!-- ================= ADD MEESHO LINK CARD (HERO SECTION) ================= -->
+  <!-- ================= ADD MEESHO LINK CARD (HERO FORM) ================= -->
   <section class="add-link-section">
     <div class="add-link-card">
       <div class="card-header-flex">
@@ -37,14 +53,19 @@
           </svg>
           <span>Add Meesho Product Link</span>
         </h1>
-        <span class="add-badge">Auto Image & Title Extractor</span>
+        <span class="add-badge">Exact Image & Price Extractor</span>
       </div>
 
       <form id="addLinkForm">
         <div class="link-input-group">
-          <input type="url" id="meeshoUrlInput" class="link-input" placeholder="Paste Meesho link here... e.g. https://www.meesho.com/saree/p/1xxxx" required>
+          <input type="url" id="meeshoUrlInput" class="link-input" placeholder="Paste Meesho link here... e.g. https://www.meesho.com/.../p/3b2nn" required>
+          
+          <select id="categorySelect" class="category-select" title="Choose Category Section">
+            <!-- Populated dynamically -->
+          </select>
+
           <button type="submit" class="fetch-btn">
-            <span>Get Product & Add Link</span>
+            <span>Get Product & Add to Section</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -54,8 +75,8 @@
 
         <!-- Optional custom inputs -->
         <div class="optional-fields-grid">
-          <input type="text" id="customTitleInput" class="sub-input" placeholder="Optional: Custom Product Title (leave empty to auto-fetch)">
-          <input type="url" id="customImageInput" class="sub-input" placeholder="Optional: Custom Image URL (leave empty to auto-fetch)">
+          <input type="text" id="customTitleInput" class="sub-input" placeholder="Optional: Custom Product Title (leave empty for auto-fetch)">
+          <input type="url" id="customImageInput" class="sub-input" placeholder="Optional: Custom Image URL (leave empty for exact Meesho photo)">
         </div>
 
         <div id="statusMessage" class="status-message"></div>
@@ -63,17 +84,18 @@
     </div>
   </section>
 
-  <!-- ================= DYNAMIC PRODUCTS & LINKS SHOWCASE ================= -->
+  <!-- ================= MAIN SECTION-BASED CATALOG ================= -->
   <main class="catalog-main">
     <div class="catalog-header-bar">
       <div>
-        <h2 class="catalog-title">Your Meesho Link Showcase <span id="productCount" class="count-badge">0 Items</span></h2>
+        <h2 class="catalog-title">Meesho Category Sections <span id="totalItemsCount" class="count-badge">0 Links</span></h2>
+        <p style="font-size: 13px; color: #666; margin-top: 2px;">Products are organized inside their respective sections with target links underneath</p>
       </div>
-      <button class="clear-all-btn" onclick="clearAllProducts()">Clear All Links</button>
+      <button class="clear-all-btn" onclick="clearAllProducts()">Clear All Saved Links</button>
     </div>
 
-    <!-- Dynamic Products Grid -->
-    <div id="productsGrid" class="products-grid"></div>
+    <!-- Category Sections Container -->
+    <div id="sectionsContainer" class="sections-container"></div>
   </main>
 
   <!-- Toast Notification -->
@@ -88,7 +110,7 @@
 
   <!-- Footer -->
   <footer class="meesho-footer">
-    <p>© 2026 Meesho Link Manager. All pasted links open directly on official meesho.com.</p>
+    <p>© 2026 Meesho Link Showcase. All target links redirect directly to official meesho.com.</p>
   </footer>
 
   <script src="app.js"></script>
