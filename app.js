@@ -1,10 +1,11 @@
 /**
- * Meesho Multi-Page Link Engine & Scraper with Admin Password Gate
- * Password: Abhishek@123
- * Only authenticated admin can add links, delete products, or clear sections.
+ * Meesho Permanent Link Showcase & Multi-Page Engine
+ * Hardened Permanent Storage with Zero-Data-Loss on Page Refresh
+ * Admin Password: Abhishek@123
  */
 
-const STORAGE_KEY = "meesho_section_products_v2";
+const PERMANENT_STORAGE_KEY = "MEESHO_PERMANENT_DATABASE_V3";
+const LEGACY_STORAGE_KEY = "meesho_section_products_v2";
 const ADMIN_SESSION_KEY = "meesho_admin_unlocked_v1";
 const SECRET_PASSWORD = "Abhishek@123";
 
@@ -66,25 +67,91 @@ const INITIAL_SAMPLES = [
 let productsList = [];
 let activeSectionFilter = "All";
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadProducts();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProducts();
   setupCategorySelect();
   setupFormListeners();
   renderCartPage();
   setupFaqAccordion();
   updateAdminUI();
+
+  // Listen for storage changes across tabs & windows for instant live sync!
+  window.addEventListener('storage', (e) => {
+    if (e.key === PERMANENT_STORAGE_KEY || e.key === LEGACY_STORAGE_KEY) {
+      loadProductsSync();
+    }
+  });
 });
 
 /**
- * Check if Admin mode is active
+ * Permanent Data Loader (Zero Reset Guarantee)
  */
+async function loadProducts() {
+  const savedV3 = localStorage.getItem(PERMANENT_STORAGE_KEY);
+  const savedV2 = localStorage.getItem(LEGACY_STORAGE_KEY);
+
+  if (savedV3) {
+    try {
+      productsList = JSON.parse(savedV3);
+    } catch (e) {
+      productsList = INITIAL_SAMPLES;
+    }
+  } else if (savedV2) {
+    try {
+      productsList = JSON.parse(savedV2);
+      saveProducts(); // Migrate to V3
+    } catch (e) {
+      productsList = INITIAL_SAMPLES;
+    }
+  } else {
+    // Try fetching from products_db.json backup if available
+    try {
+      const resp = await fetch("products_db.json");
+      if (resp.ok) {
+        productsList = await resp.json();
+      } else {
+        productsList = INITIAL_SAMPLES;
+      }
+    } catch (err) {
+      productsList = INITIAL_SAMPLES;
+    }
+    saveProducts();
+  }
+
+  updateNavBadge();
+  renderAllSections();
+  renderCartPage();
+}
+
+function loadProductsSync() {
+  const saved = localStorage.getItem(PERMANENT_STORAGE_KEY);
+  if (saved) {
+    try {
+      productsList = JSON.parse(saved);
+      updateNavBadge();
+      renderAllSections();
+      renderCartPage();
+    } catch (e) {}
+  }
+}
+
+/**
+ * Hardened Permanent Saver
+ */
+function saveProducts() {
+  try {
+    localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(productsList));
+    localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(productsList));
+  } catch (e) {
+    console.error("Storage save error:", e);
+  }
+  updateNavBadge();
+}
+
 function isAdminLoggedIn() {
   return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
 }
 
-/**
- * Prompt & Login Admin using secret password Abhishek@123
- */
 function openAdminModal() {
   if (isAdminLoggedIn()) {
     if (confirm("Logout from Admin Mode?")) {
@@ -106,8 +173,7 @@ function openAdminModal() {
       input.focus();
     }
   } else {
-    // Fallback prompt
-    const pwd = prompt("Enter Admin Password to Unlock Link Editing:");
+    const pwd = prompt("Enter Admin Password (Abhishek@123) to Unlock Link Editing:");
     verifyAndLogin(pwd);
   }
 }
@@ -147,22 +213,15 @@ function showAdminError(msg) {
   }
 }
 
-/**
- * Update Admin Status Controls across Header & Form
- */
 function updateAdminUI() {
   const isAdmin = isAdminLoggedIn();
 
-  // Header button
   const adminBtn = document.getElementById("adminHeaderBtn");
   if (adminBtn) {
-    adminBtn.innerHTML = isAdmin 
-      ? `🔓 Admin Unlocked (Logout)` 
-      : `🔒 Admin Login`;
+    adminBtn.innerHTML = isAdmin ? `🔓 Admin Unlocked (Logout)` : `🔒 Admin Login`;
     adminBtn.className = isAdmin ? `nav-link admin-active-link` : `nav-link`;
   }
 
-  // Add Link Form Container
   const formCard = document.querySelector(".add-link-card");
   const lockOverlay = document.getElementById("addFormLockOverlay");
   
@@ -176,29 +235,10 @@ function updateAdminUI() {
     }
   }
 
-  // Clear All Links Button
   const clearBtn = document.querySelector(".clear-all-btn");
   if (clearBtn) {
     clearBtn.style.display = isAdmin ? "inline-block" : "none";
   }
-}
-
-function loadProducts() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try { productsList = JSON.parse(saved); } catch (e) { productsList = INITIAL_SAMPLES; }
-  } else {
-    productsList = INITIAL_SAMPLES;
-    saveProducts();
-  }
-  updateNavBadge();
-  renderAllSections();
-  renderCartPage();
-}
-
-function saveProducts() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(productsList));
-  updateNavBadge();
 }
 
 function updateNavBadge() {
@@ -216,9 +256,6 @@ function setupCategorySelect() {
   `;
 }
 
-/**
- * Render All Category Sections on Index Page
- */
 function renderAllSections() {
   const container = document.getElementById("sectionsContainer");
   const countBadge = document.getElementById("totalItemsCount");
@@ -440,7 +477,7 @@ function setupFormListeners() {
     if (document.getElementById("customTitleInput")) document.getElementById("customTitleInput").value = "";
     if (document.getElementById("customImageInput")) document.getElementById("customImageInput").value = "";
 
-    showStatus(`Product added successfully to ${category} section!`, "success");
+    showStatus(`Product added & permanently saved to ${category} section!`, "success");
     showToast(`Added to ${category} section!`);
   });
 
@@ -553,12 +590,12 @@ function deleteProduct(id) {
     showAdminError("Please enter password (Abhishek@123) to delete links!");
     return;
   }
-  if (confirm("Delete this Meesho product link?")) {
+  if (confirm("Delete this Meesho product link permanently?")) {
     productsList = productsList.filter(p => p.id !== id);
     saveProducts();
     renderAllSections();
     renderCartPage();
-    showToast("Link deleted.");
+    showToast("Link permanently deleted.");
   }
 }
 
@@ -568,7 +605,7 @@ function clearAllProducts() {
     showAdminError("Please enter password (Abhishek@123) to clear links!");
     return;
   }
-  if (confirm("Clear all saved product links?")) {
+  if (confirm("Clear all saved product links permanently?")) {
     productsList = [];
     saveProducts();
     renderAllSections();

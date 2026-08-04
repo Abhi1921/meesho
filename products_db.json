@@ -1,0 +1,38 @@
+[
+  {
+    "id": "sample-1",
+    "title": "Muuchstac Ocean Face Wash for Men | Fight Acne & Pimples, Brighten Skin | 100 ml",
+    "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
+    "link": "https://www.meesho.com/muuchstac-ocean-face-wash-for-men-fight-acne-pimples-brighten-skin-clears-dirt-oil-control-refreshing-feel-multi-action-formula-100-ml-pack-of-2/p/3b2nn",
+    "category": "Beauty",
+    "price": 238,
+    "originalPrice": 598,
+    "discount": "60% off",
+    "rating": 4.0,
+    "addedAt": 1722780000000
+  },
+  {
+    "id": "sample-2",
+    "title": "Trendy Embroidered Rayon Straight Kurti Set",
+    "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80",
+    "link": "https://www.meesho.com/kurtis/p/2xxxx",
+    "category": "Ethnic Wear",
+    "price": 299,
+    "originalPrice": 999,
+    "discount": "70% off",
+    "rating": 4.4,
+    "addedAt": 1722779000000
+  },
+  {
+    "id": "sample-3",
+    "title": "Men Cotton Printed Oversized Casual T-Shirt",
+    "image": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80",
+    "link": "https://www.meesho.com/mens-tshirts/p/4xxxx",
+    "category": "Menswear",
+    "price": 249,
+    "originalPrice": 899,
+    "discount": "72% off",
+    "rating": 4.2,
+    "addedAt": 1722778000000
+  }
+]
