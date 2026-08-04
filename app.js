@@ -1,13 +1,14 @@
 /**
  * Meesho Permanent Link Showcase & Multi-Page Engine
- * Hardened Permanent Storage with Zero-Data-Loss on Page Refresh
- * Admin Password: Abhishek@123
+ * Cryptographic SHA-256 Password Hashing Gate (No plain-text password in code or UI)
  */
 
 const PERMANENT_STORAGE_KEY = "MEESHO_PERMANENT_DATABASE_V3";
 const LEGACY_STORAGE_KEY = "meesho_section_products_v2";
 const ADMIN_SESSION_KEY = "meesho_admin_unlocked_v1";
-const SECRET_PASSWORD = "Abhishek@123";
+
+// Cryptographic SHA-256 Hash of Secret Admin Password
+const SECRET_PASSWORD_HASH = "01d56e070158abb1ddacba20de006e9ae8fc26280e6ab5ecf9dcda079949fb4e";
 
 const CATEGORIES = [
   { id: "Ethnic Wear", name: "Kurti, Saree & Lehenga", icon: "🌸" },
@@ -75,7 +76,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFaqAccordion();
   updateAdminUI();
 
-  // Listen for storage changes across tabs & windows for instant live sync!
   window.addEventListener('storage', (e) => {
     if (e.key === PERMANENT_STORAGE_KEY || e.key === LEGACY_STORAGE_KEY) {
       loadProductsSync();
@@ -84,34 +84,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- * Permanent Data Loader (Zero Reset Guarantee)
+ * Web Crypto API SHA-256 Hasher
  */
+async function hashPassword(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 async function loadProducts() {
   const savedV3 = localStorage.getItem(PERMANENT_STORAGE_KEY);
   const savedV2 = localStorage.getItem(LEGACY_STORAGE_KEY);
 
   if (savedV3) {
-    try {
-      productsList = JSON.parse(savedV3);
-    } catch (e) {
-      productsList = INITIAL_SAMPLES;
-    }
+    try { productsList = JSON.parse(savedV3); } catch (e) { productsList = INITIAL_SAMPLES; }
   } else if (savedV2) {
     try {
       productsList = JSON.parse(savedV2);
-      saveProducts(); // Migrate to V3
-    } catch (e) {
-      productsList = INITIAL_SAMPLES;
-    }
+      saveProducts();
+    } catch (e) { productsList = INITIAL_SAMPLES; }
   } else {
-    // Try fetching from products_db.json backup if available
     try {
       const resp = await fetch("products_db.json");
-      if (resp.ok) {
-        productsList = await resp.json();
-      } else {
-        productsList = INITIAL_SAMPLES;
-      }
+      if (resp.ok) productsList = await resp.json();
+      else productsList = INITIAL_SAMPLES;
     } catch (err) {
       productsList = INITIAL_SAMPLES;
     }
@@ -135,16 +133,11 @@ function loadProductsSync() {
   }
 }
 
-/**
- * Hardened Permanent Saver
- */
 function saveProducts() {
   try {
     localStorage.setItem(PERMANENT_STORAGE_KEY, JSON.stringify(productsList));
     localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(productsList));
-  } catch (e) {
-    console.error("Storage save error:", e);
-  }
+  } catch (e) {}
   updateNavBadge();
 }
 
@@ -173,7 +166,7 @@ function openAdminModal() {
       input.focus();
     }
   } else {
-    const pwd = prompt("Enter Admin Password (Abhishek@123) to Unlock Link Editing:");
+    const pwd = prompt("Enter Admin Password to Unlock Link Editing:");
     verifyAndLogin(pwd);
   }
 }
@@ -190,8 +183,13 @@ function submitAdminPassword(e) {
   verifyAndLogin(pwd);
 }
 
-function verifyAndLogin(pwd) {
-  if (pwd === SECRET_PASSWORD) {
+/**
+ * SHA-256 Cryptographic Password Verification
+ */
+async function verifyAndLogin(pwd) {
+  if (!pwd) return;
+  const hashedInput = await hashPassword(pwd);
+  if (hashedInput === SECRET_PASSWORD_HASH) {
     sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
     closeAdminModal();
     updateAdminUI();
@@ -276,7 +274,7 @@ function renderAllSections() {
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
         <h3>No Links Listed for this Category</h3>
-        <p>Unlock Admin Mode (Password: Abhishek@123) to add new Meesho links!</p>
+        <p>Unlock Admin Mode to add new Meesho links!</p>
       </div>
     `;
     return;
@@ -433,7 +431,7 @@ function setupFormListeners() {
 
     if (!isAdminLoggedIn()) {
       openAdminModal();
-      showAdminError("Please enter password (Abhishek@123) to add links!");
+      showAdminError("Please enter Admin Password to add links!");
       return;
     }
 
@@ -587,7 +585,7 @@ function getCategoryIcon(catId) {
 function deleteProduct(id) {
   if (!isAdminLoggedIn()) {
     openAdminModal();
-    showAdminError("Please enter password (Abhishek@123) to delete links!");
+    showAdminError("Please enter Admin Password to delete links!");
     return;
   }
   if (confirm("Delete this Meesho product link permanently?")) {
@@ -602,7 +600,7 @@ function deleteProduct(id) {
 function clearAllProducts() {
   if (!isAdminLoggedIn()) {
     openAdminModal();
-    showAdminError("Please enter password (Abhishek@123) to clear links!");
+    showAdminError("Please enter Admin Password to clear links!");
     return;
   }
   if (confirm("Clear all saved product links permanently?")) {
