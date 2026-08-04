@@ -1,0 +1,846 @@
+/* ==========================================================================
+   Meesho Clone - Premium E-Commerce Design System & Stylesheet
+   Brand Colors: Meesho Pink (#f43397), Deep Purple (#9f208c), Green (#038d63)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --meesho-pink: #f43397;
+  --meesho-pink-dark: #d8207f;
+  --meesho-purple: #9f208c;
+  --meesho-purple-dark: #7e176e;
+  --meesho-green: #038d63;
+  --meesho-green-light: #e6f7f1;
+  --meesho-bg: #f8f8fb;
+  --card-bg: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #8b8ba3;
+  --border-color: #e0e0e0;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 30px rgba(159, 32, 140, 0.15);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font-main: 'Roboto', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--meesho-bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==========================================================================
+   1. TOP NAVIGATION & HEADER
+   ========================================================================== */
+.meesho-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.header-top {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.meesho-logo-text {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--meesho-purple);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.meesho-logo-dot {
+  color: var(--meesho-pink);
+}
+
+/* Search Bar */
+.search-container {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f5;
+  border: 1px solid #e2e2ea;
+  border-radius: 8px;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+
+.search-wrapper:focus-within {
+  border-color: var(--meesho-pink);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(244, 51, 151, 0.15);
+}
+
+.search-icon {
+  color: #888;
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+/* Header Quick Links & Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--meesho-pink);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e5e5e5;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  gap: 4px;
+  cursor: pointer;
+}
+
+.action-item svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.action-item:hover {
+  color: var(--meesho-pink);
+}
+
+/* Sub Navigation Categories Bar */
+.category-nav-bar {
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+}
+
+.category-nav-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-nav-container::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-tab {
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a4a4a;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.cat-tab:hover, .cat-tab.active {
+  color: var(--meesho-pink);
+  border-bottom-color: var(--meesho-pink);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   2. HERO BANNER SECTION (MAHA INDIAN SAVINGS SALE)
+   ========================================================================== */
+.hero-banner-section {
+  max-width: 1280px;
+  margin: 20px auto 0;
+  padding: 0 16px;
+}
+
+.meesho-banner-card {
+  background: linear-gradient(135deg, #fbe4ee 0%, #f7c3dc 35%, #9f208c 100%);
+  border-radius: 16px;
+  padding: 32px 40px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.banner-content {
+  z-index: 2;
+  max-width: 550px;
+}
+
+.sale-badge-box {
+  display: inline-block;
+  background: #ffffff;
+  color: var(--meesho-purple);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+}
+
+.banner-title {
+  font-family: var(--font-heading);
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  color: #3b0632;
+  text-shadow: 0 2px 4px rgba(255,255,255,0.4);
+}
+
+.banner-title span {
+  color: var(--meesho-pink);
+  background: #ffffff;
+  padding: 2px 10px;
+  border-radius: 8px;
+}
+
+.banner-subtitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.offer-pill {
+  background: #ffeb3b;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.banner-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  color: var(--meesho-purple);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 30px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  transition: all 0.25 ease;
+  cursor: pointer;
+}
+
+.banner-cta-btn:hover {
+  transform: translateY(-2px);
+  background: var(--meesho-pink);
+  color: #ffffff;
+}
+
+.banner-qr-card {
+  z-index: 2;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border: 2px solid rgba(255,255,255,0.8);
+}
+
+.qr-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--meesho-purple);
+  margin-bottom: 8px;
+}
+
+.qr-code-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.qr-subtext {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Decorative Banner Graphic Elements */
+.banner-bg-shape {
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 320px;
+  height: 320px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   3. TRUST FEATURES STRIP
+   ========================================================================== */
+.trust-features-bar {
+  max-width: 1280px;
+  margin: 16px auto;
+  padding: 0 16px;
+}
+
+.trust-wrapper {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f0f0f5;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trust-icon-box {
+  width: 40px;
+  height: 40px;
+  background: #fdf0f7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--meesho-pink);
+  font-size: 18px;
+}
+
+.trust-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c2c2c;
+}
+
+.trust-divider {
+  width: 1px;
+  height: 28px;
+  background: #eaeaea;
+}
+
+/* ==========================================================================
+   4. ARCH CATEGORIES SECTION
+   ========================================================================== */
+.categories-showcase {
+  max-width: 1280px;
+  margin: 24px auto 0;
+  padding: 0 16px;
+}
+
+.section-heading {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 16px;
+}
+
+.arch-cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.arch-cat-card:hover {
+  transform: translateY(-4px);
+}
+
+.arch-image-wrap {
+  width: 110px;
+  height: 125px;
+  border-top-left-radius: 55px;
+  border-top-right-radius: 55px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  overflow: hidden;
+  background-color: #f7e8f3;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  border: 2px solid #ffffff;
+  position: relative;
+}
+
+.arch-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.arch-cat-card:hover .arch-image-wrap img {
+  transform: scale(1.08);
+}
+
+.arch-cat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   5. MAIN CATALOG CONTROLS & PRODUCT GRID
+   ========================================================================== */
+.catalog-main {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.catalog-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.catalog-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.catalog-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.filter-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filter-pill-btn {
+  background: #f0f0f5;
+  border: 1px solid #e0e0e8;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.filter-pill-btn:hover, .filter-pill-btn.active {
+  background: var(--meesho-purple);
+  color: #ffffff;
+  border-color: var(--meesho-purple);
+}
+
+.sort-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.sort-select {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid #cccccc;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Individual Meesho Product Card */
+.product-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eaeaea;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  border-color: #f7bade;
+}
+
+.product-img-container {
+  width: 100%;
+  height: 240px;
+  position: relative;
+  background-color: #f4f4f6;
+  overflow: hidden;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+.redirect-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(159, 32, 140, 0.9);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.product-info {
+  padding: 12px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 38px;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.current-price {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.original-price {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.discount-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--meesho-green);
+}
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.free-delivery-badge {
+  background: #f2f2f7;
+  color: #555566;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.rating-badge {
+  background: var(--meesho-green);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.review-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.trust-supplier-tag {
+  margin-top: auto;
+  font-size: 11px;
+  color: #888899;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-top: 1px dashed #efefef;
+  padding-top: 8px;
+}
+
+.trust-supplier-tag svg {
+  color: var(--meesho-purple);
+}
+
+/* Redirection Floating Bar / Toast */
+.redirect-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #ffffff;
+  border-left: 5px solid var(--meesho-pink);
+  padding: 14px 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 9999;
+  transform: translateY(120px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.redirect-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   6. FOOTER SECTION
+   ========================================================================== */
+.meesho-footer {
+  background: #ffffff;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 60px;
+  padding: 40px 0 20px;
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.footer-col h4 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col ul li {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.footer-col ul li a:hover {
+  color: var(--meesho-pink);
+}
+
+.footer-bottom {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Responsive Rules */
+@media (max-width: 900px) {
+  .header-top {
+    flex-wrap: wrap;
+  }
+  .search-container {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+  }
+  .banner-title {
+    font-size: 26px;
+  }
+  .banner-qr-card {
+    display: none;
+  }
+  .trust-wrapper {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .trust-divider {
+    display: none;
+  }
+}
