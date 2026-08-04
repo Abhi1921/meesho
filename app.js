@@ -1,254 +1,284 @@
 /**
- * Meesho Clone - Dynamic Application Engine
- * Handles Product Listing, Dynamic Searching, Filtering, Sorting, and Seamless Redirection to meesho.com
+ * Meesho Link Extractor & Custom Showcase Engine
+ * Enables pasting Meesho product URLs, auto-fetching metadata/images,
+ * displaying products with target links underneath, and localStorage persistence.
  */
 
-const MEESHO_PRODUCTS = [
+const STORAGE_KEY = "meesho_pasted_products_v1";
+
+// Initial sample links if localStorage is empty
+const INITIAL_SAMPLES = [
   {
-    id: 1,
-    title: "Aagam Fashionable Ethnic Sarees with Blouse Piece",
-    category: "Ethnic Wear",
-    price: 349,
-    originalPrice: 1299,
-    discount: "73% off",
-    rating: 4.3,
-    reviews: "15,820",
-    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/sarees/p/1xxxx"
-  },
-  {
-    id: 2,
-    title: "Trendy Rayon Straight Embroidered Kurti",
-    category: "Ethnic Wear",
-    price: 299,
-    originalPrice: 999,
-    discount: "70% off",
-    rating: 4.4,
-    reviews: "22,410",
+    id: "sample-1",
+    title: "Trendy Embroidered Rayon Kurti Set",
     image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/kurtis/p/2xxxx"
+    link: "https://www.meesho.com/sarees/p/1xxxx",
+    addedAt: Date.now()
   },
   {
-    id: 3,
-    title: "Elegant Women Printed Floral Western Midi Dress",
-    category: "Western",
-    price: 399,
-    originalPrice: 1499,
-    discount: "73% off",
-    rating: 4.2,
-    reviews: "8,950",
-    image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/western-dresses/p/3xxxx"
+    id: "sample-2",
+    title: "Aagam Fashionable Ethnic Saree",
+    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+    link: "https://www.meesho.com/kurtis/p/2xxxx",
+    addedAt: Date.now() - 1000
   },
   {
-    id: 4,
-    title: "Stylish Men Cotton Blend Printed Oversized T-Shirt",
-    category: "Menswear",
-    price: 249,
-    originalPrice: 899,
-    discount: "72% off",
-    rating: 4.1,
-    reviews: "31,200",
+    id: "sample-3",
+    title: "Men Cotton Printed Oversized T-Shirt",
     image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/mens-tshirts/p/4xxxx"
-  },
-  {
-    id: 5,
-    title: "Lightweight Breathable Running Shoes for Men",
-    category: "Footwear",
-    price: 499,
-    originalPrice: 1999,
-    discount: "75% off",
-    rating: 4.5,
-    reviews: "18,400",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/footwear/p/5xxxx"
-  },
-  {
-    id: 6,
-    title: "Modern Ceramic Flower Vase for Living Room Decor",
-    category: "Home Decor",
-    price: 279,
-    originalPrice: 899,
-    discount: "68% off",
-    rating: 4.6,
-    reviews: "5,340",
-    image: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/home-decor/p/6xxxx"
-  },
-  {
-    id: 7,
-    title: "Complete Matte Makeup Kit Set for Women",
-    category: "Beauty",
-    price: 389,
-    originalPrice: 1599,
-    discount: "75% off",
-    rating: 4.3,
-    reviews: "14,100",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/beauty/p/7xxxx"
-  },
-  {
-    id: 8,
-    title: "Premium PU Leather Handbag Tote for Women",
-    category: "Accessories",
-    price: 429,
-    originalPrice: 1799,
-    discount: "76% off",
-    rating: 4.4,
-    reviews: "9,850",
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/handbags/p/8xxxx"
-  },
-  {
-    id: 9,
-    title: "Smart Bluetooth Fitness Tracker Watch with HD Display",
-    category: "Electronics",
-    price: 699,
-    originalPrice: 2999,
-    discount: "76% off",
-    rating: 4.2,
-    reviews: "45,000",
-    image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/smartwatches/p/9xxxx"
-  },
-  {
-    id: 10,
-    title: "Women Gold-Plated Kundan Jewellery Set with Earrings",
-    category: "Accessories",
-    price: 299,
-    originalPrice: 1199,
-    discount: "75% off",
-    rating: 4.5,
-    reviews: "12,900",
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/jewellery/p/10xxxx"
-  },
-  {
-    id: 11,
-    title: "Boys & Girls Soft Cute Plush Bear Toy (30cm)",
-    category: "Kids & Toys",
-    price: 199,
-    originalPrice: 699,
-    discount: "71% off",
-    rating: 4.7,
-    reviews: "7,840",
-    image: "https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/toys/p/11xxxx"
-  },
-  {
-    id: 12,
-    title: "Men Slim Fit Casual Denim Stretchable Jeans",
-    category: "Menswear",
-    price: 549,
-    originalPrice: 1899,
-    discount: "71% off",
-    rating: 4.3,
-    reviews: "28,700",
-    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80",
-    meeshoUrl: "https://www.meesho.com/mens-jeans/p/12xxxx"
+    link: "https://www.meesho.com/mens-tshirts/p/4xxxx",
+    addedAt: Date.now() - 2000
   }
 ];
 
-let currentCategory = "All";
-let currentSearch = "";
-let currentSort = "relevance";
+let productsList = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderProducts();
-  setupEventListeners();
+  loadProducts();
+  setupFormListeners();
 });
 
 /**
- * Render Product Grid based on active filters
+ * Load products from localStorage or initialize with samples
  */
-function renderProducts() {
-  const container = document.getElementById("productsGrid");
-  if (!container) return;
+function loadProducts() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      productsList = JSON.parse(saved);
+    } catch (e) {
+      productsList = INITIAL_SAMPLES;
+    }
+  } else {
+    productsList = INITIAL_SAMPLES;
+    saveProducts();
+  }
+  renderGrid();
+}
 
-  let filtered = MEESHO_PRODUCTS.filter(item => {
-    const matchesCategory = (currentCategory === "All") || 
-      (item.category.toLowerCase() === currentCategory.toLowerCase()) ||
-      (currentCategory === "Popular");
-    
-    const matchesSearch = item.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-      item.category.toLowerCase().includes(currentSearch.toLowerCase());
+/**
+ * Save current list to localStorage
+ */
+function saveProducts() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(productsList));
+}
 
-    return matchesCategory && matchesSearch;
-  });
-
-  // Sorting
-  if (currentSort === "price-low") {
-    filtered.sort((a, b) => a.price - b.price);
-  } else if (currentSort === "price-high") {
-    filtered.sort((a, b) => b.price - a.price);
-  } else if (currentSort === "rating") {
-    filtered.sort((a, b) => b.rating - a.rating);
+/**
+ * Render Product Cards Grid
+ */
+function renderGrid() {
+  const grid = document.getElementById("productsGrid");
+  const countBadge = document.getElementById("productCount");
+  
+  if (countBadge) {
+    countBadge.textContent = `${productsList.length} Items`;
   }
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #fff; border-radius: 12px;">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9f208c" stroke-width="1.5">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  if (!grid) return;
+
+  if (productsList.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #fff; border-radius: 14px; border: 2px dashed #f0e0ed;">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="1.5">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
-        <h3 style="margin-top: 16px; font-size: 20px; color: #333;">No Products Found</h3>
-        <p style="color: #666; font-size: 14px; margin-top: 8px;">Try searching for "Kurti", "Saree", "Shoes", or "Jeans"</p>
+        <h3 style="margin-top: 14px; font-size: 20px; color: #333; font-family: 'Outfit', sans-serif;">No Meesho Links Added Yet</h3>
+        <p style="color: #666; font-size: 14px; margin-top: 6px;">Paste any Meesho product link above to auto-fetch and add it to your showcase!</p>
       </div>
     `;
     return;
   }
 
-  container.innerHTML = filtered.map(product => {
-    // Generate actual meesho redirection search/item URL
-    const targetUrl = `https://www.meesho.com/search?q=${encodeURIComponent(product.title)}`;
+  grid.innerHTML = productsList.map(item => `
+    <div class="product-card">
+      <button class="delete-card-btn" title="Delete Link" onclick="deleteProduct('${item.id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+      </button>
 
-    return `
-      <div class="product-card" onclick="redirectToMeesho('${escapeQuotes(targetUrl)}', '${escapeQuotes(product.title)}')">
-        <div class="product-img-container">
-          <img src="${product.image}" alt="${product.title}" class="product-img" loading="lazy">
-          <div class="redirect-badge">
-            <span>Buy on Meesho</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </div>
-        </div>
-        <div class="product-info">
-          <h3 class="product-title">${product.title}</h3>
-          <div class="price-row">
-            <span class="current-price">₹${product.price}</span>
-            <span class="original-price">₹${product.originalPrice}</span>
-            <span class="discount-tag">${product.discount}</span>
-          </div>
-          <div class="badge-row">
-            <span class="free-delivery-badge">Free Delivery</span>
-            <span class="rating-badge">${product.rating} ★</span>
-            <span class="review-count">(${product.reviews})</span>
-          </div>
-          <div class="trust-supplier-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-            </svg>
-            <span>Meesho Trusted Supplier</span>
-          </div>
+      <div class="product-img-container" onclick="openLink('${escapeQuotes(item.link)}')">
+        <img src="${item.image}" alt="${escapeQuotes(item.title)}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80'">
+      </div>
+
+      <div class="product-info">
+        <h3 class="product-title">${item.title}</h3>
+        <a href="${item.link}" target="_blank" class="buy-now-btn" onclick="showToast('Opening Meesho link...')">
+          <span>Buy on Meesho</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Pasted Link Display Box Underneath Card -->
+      <div class="card-link-footer">
+        <span class="link-label">Meesho Product Link:</span>
+        <div class="link-anchor-box">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <a href="${item.link}" target="_blank" class="link-anchor" title="${escapeQuotes(item.link)}">
+            ${item.link}
+          </a>
         </div>
       </div>
-    `;
-  }).join('');
+    </div>
+  `).join('');
 }
 
 /**
- * Handle direct link/click redirection to Meesho
+ * Handle Form Submission & Auto Link Fetching
  */
-function redirectToMeesho(url, title = 'Meesho Product') {
-  showToast(`Redirecting to Meesho: ${title}`);
-  setTimeout(() => {
-    window.open(url, '_blank');
-  }, 300);
+function setupFormListeners() {
+  const form = document.getElementById("addLinkForm");
+  const linkInput = document.getElementById("meeshoUrlInput");
+  const statusMsg = document.getElementById("statusMessage");
+
+  if (!form || !linkInput) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const url = linkInput.value.trim();
+
+    if (!url) {
+      showStatus("Please paste a valid Meesho link", "error");
+      return;
+    }
+
+    if (!url.toLowerCase().includes("meesho.com")) {
+      showStatus("Please make sure the link is from meesho.com", "error");
+      return;
+    }
+
+    showStatus("Fetching product details & image from Meesho...", "loading");
+
+    // Extract title & image
+    const customTitle = document.getElementById("customTitleInput")?.value.trim();
+    const customImage = document.getElementById("customImageInput")?.value.trim();
+
+    let fetchedData = await fetchMeeshoMetadata(url);
+
+    const title = customTitle || fetchedData.title || extractTitleFromUrl(url);
+    const image = customImage || fetchedData.image || getRandomMeeshoProductImage(title);
+
+    const newProduct = {
+      id: "prod-" + Date.now(),
+      title: title,
+      image: image,
+      link: url,
+      addedAt: Date.now()
+    };
+
+    productsList.unshift(newProduct);
+    saveProducts();
+    renderGrid();
+
+    linkInput.value = "";
+    if (document.getElementById("customTitleInput")) document.getElementById("customTitleInput").value = "";
+    if (document.getElementById("customImageInput")) document.getElementById("customImageInput").value = "";
+
+    showStatus("Product successfully added with link!", "success");
+    showToast("New Meesho Product Link Added!");
+  });
+}
+
+/**
+ * Attempt to fetch Open Graph Metadata (og:image, og:title) via CORS proxy
+ */
+async function fetchMeeshoMetadata(meeshoUrl) {
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(meeshoUrl)}`;
+    const response = await fetch(proxyUrl, { signal: AbortSignal.timeout(5000) });
+    if (!response.ok) throw new Error("Network error");
+    const data = await response.json();
+    const htmlText = data.contents;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, "text/html");
+
+    const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
+                    doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content");
+    const ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute("content") || doc.title;
+
+    return {
+      title: ogTitle ? ogTitle.replace('| Meesho', '').trim() : null,
+      image: ogImage || null
+    };
+  } catch (err) {
+    console.warn("CORS Proxy metadata fetch fallback:", err);
+    return { title: null, image: null };
+  }
+}
+
+/**
+ * Extract clean fallback title from URL slug
+ */
+function extractTitleFromUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const pathSegments = parsed.pathname.split('/').filter(Boolean);
+    if (pathSegments.length > 0) {
+      let slug = pathSegments[0].replace(/-/g, ' ');
+      return slug.charAt(0).toUpperCase() + slug.slice(1);
+    }
+  } catch (e) {}
+  return "Meesho Trending Product";
+}
+
+/**
+ * Fallback product image generator based on keyword
+ */
+function getRandomMeeshoProductImage(keyword = '') {
+  const kw = keyword.toLowerCase();
+  if (kw.includes('saree') || kw.includes('kurti') || kw.includes('ethnic')) {
+    return 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80';
+  } else if (kw.includes('shirt') || kw.includes('men') || kw.includes('jean')) {
+    return 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80';
+  } else if (kw.includes('shoe') || kw.includes('footwear') || kw.includes('sneaker')) {
+    return 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80';
+  } else if (kw.includes('decor') || kw.includes('home') || kw.includes('vase')) {
+    return 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=600&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80';
+}
+
+/**
+ * Delete a product link by ID
+ */
+function deleteProduct(id) {
+  productsList = productsList.filter(p => p.id !== id);
+  saveProducts();
+  renderGrid();
+  showToast("Product link removed.");
+}
+
+/**
+ * Clear all added links
+ */
+function clearAllProducts() {
+  if (confirm("Are you sure you want to remove all saved links?")) {
+    productsList = [];
+    saveProducts();
+    renderGrid();
+    showToast("All links cleared.");
+  }
+}
+
+function openLink(url) {
+  window.open(url, '_blank');
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById("statusMessage");
+  if (el) {
+    el.textContent = msg;
+    el.className = `status-message ${type}`;
+  }
 }
 
 function showToast(message) {
@@ -263,39 +293,6 @@ function showToast(message) {
   }
 }
 
-/**
- * Event Listeners & Controllers
- */
-function setupEventListeners() {
-  // Search input
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      currentSearch = e.target.value.trim();
-      renderProducts();
-    });
-  }
-
-  // Sort select
-  const sortSelect = document.getElementById('sortSelect');
-  if (sortSelect) {
-    sortSelect.addEventListener('change', (e) => {
-      currentSort = e.target.value;
-      renderProducts();
-    });
-  }
-
-  // Category Tabs & Filter Pills
-  document.querySelectorAll('[data-category]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('[data-category]').forEach(b => b.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      currentCategory = e.currentTarget.getAttribute('data-category');
-      renderProducts();
-    });
-  });
-}
-
 function escapeQuotes(str) {
-  return str.replace(/'/g, "\\'");
+  return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Shopping Site for Fashion, Electronics, Home & More | Meesho</title>
-  <meta name="description" content="Lowest Prices, Best Quality Shopping on Meesho. Buy Sarees, Kurtis, Menswear, Footwear, Beauty & Electronics at Wholesale Prices. Free Delivery & Cash on Delivery.">
+  <title>Meesho Link Manager & Showcase | Meesho Product Link Generator</title>
+  <meta name="description" content="Paste Meesho product links, fetch product pictures, and showcase products with target redirect links.">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="https://www.meesho.com/favicon.ico" type="image/x-icon">
 </head>
@@ -18,255 +18,77 @@
         <span class="meesho-logo-text">meesho<span class="meesho-logo-dot">.</span></span>
       </a>
 
-      <!-- Search Bar -->
-      <div class="search-container">
-        <div class="search-wrapper">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="searchInput" class="search-input" placeholder="Try Saree, Kurti or Search by Product Code">
-        </div>
-      </div>
-
-      <!-- Quick Header Actions -->
+      <!-- Quick Actions -->
       <div class="header-actions">
+        <a href="https://www.meesho.com" target="_blank" class="nav-link">Visit Meesho.com ↗</a>
         <a href="https://supplier.meesho.com" target="_blank" class="nav-link">Become a Supplier</a>
-        <div class="nav-divider"></div>
-        <a href="https://www.meesho.com/investor-relations" target="_blank" class="nav-link">Investor Relations</a>
-        <div class="nav-divider"></div>
-        
-        <div class="action-item" onclick="redirectToMeesho('https://www.meesho.com/auth', 'Meesho User Profile')">
-          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span>Profile</span>
-        </div>
-
-        <div class="action-item" onclick="redirectToMeesho('https://www.meesho.com/cart', 'Meesho Shopping Cart')">
-          <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-          <span>Cart</span>
-        </div>
       </div>
     </div>
-
-    <!-- Category Sub-Header Navigation Bar -->
-    <nav class="category-nav-bar">
-      <div class="category-nav-container">
-        <div class="cat-tab active" data-category="All">Popular</div>
-        <div class="cat-tab" data-category="Ethnic Wear">Kurti, Saree & Lehenga</div>
-        <div class="cat-tab" data-category="Western">Women Western</div>
-        <div class="cat-tab" data-category="Menswear">Men</div>
-        <div class="cat-tab" data-category="Kids & Toys">Kids & Toys</div>
-        <div class="cat-tab" data-category="Home Decor">Home & Kitchen</div>
-        <div class="cat-tab" data-category="Beauty">Beauty & Health</div>
-        <div class="cat-tab" data-category="Accessories">Jewellery & Accessories</div>
-        <div class="cat-tab" data-category="Footwear">Bags & Footwear</div>
-        <div class="cat-tab" data-category="Electronics">Electronics</div>
-      </div>
-    </nav>
   </header>
 
-  <!-- ================= HERO PROMOTIONAL BANNER ================= -->
-  <section class="hero-banner-section">
-    <div class="meesho-banner-card" onclick="redirectToMeesho('https://www.meesho.com/', 'Meesho Savings Sale')">
-      <div class="banner-content">
-        <div class="sale-badge-box">MAHA INDIAN SAVINGS SALE</div>
-        <h1 class="banner-title">Lowest Prices <span>UP TO 70% OFF</span></h1>
-        <p class="banner-subtitle">Upto 35% OFF on your 1st order <span class="offer-pill">CODE: MEESHO35</span></p>
-        <div class="banner-cta-btn">
-          <span>Shop Now</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
+  <!-- ================= ADD MEESHO LINK CARD (HERO SECTION) ================= -->
+  <section class="add-link-section">
+    <div class="add-link-card">
+      <div class="card-header-flex">
+        <h1 class="add-title">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="2.5">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
           </svg>
+          <span>Add Meesho Product Link</span>
+        </h1>
+        <span class="add-badge">Auto Image & Title Extractor</span>
+      </div>
+
+      <form id="addLinkForm">
+        <div class="link-input-group">
+          <input type="url" id="meeshoUrlInput" class="link-input" placeholder="Paste Meesho link here... e.g. https://www.meesho.com/saree/p/1xxxx" required>
+          <button type="submit" class="fetch-btn">
+            <span>Get Product & Add Link</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
         </div>
-      </div>
 
-      <!-- App QR Code Block -->
-      <div class="banner-qr-card">
-        <span class="qr-title">Smart Shopping</span>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.meesho.com/app" alt="Meesho App QR" class="qr-code-img">
-        <span class="qr-subtext">Only on App</span>
-      </div>
+        <!-- Optional custom inputs -->
+        <div class="optional-fields-grid">
+          <input type="text" id="customTitleInput" class="sub-input" placeholder="Optional: Custom Product Title (leave empty to auto-fetch)">
+          <input type="url" id="customImageInput" class="sub-input" placeholder="Optional: Custom Image URL (leave empty to auto-fetch)">
+        </div>
 
-      <div class="banner-bg-shape"></div>
+        <div id="statusMessage" class="status-message"></div>
+      </form>
     </div>
   </section>
 
-  <!-- ================= TRUST BADGES BAR ================= -->
-  <section class="trust-features-bar">
-    <div class="trust-wrapper">
-      <div class="trust-item">
-        <div class="trust-icon-box">🔄</div>
-        <span class="trust-text">7 Days Easy Return</span>
-      </div>
-      <div class="trust-divider"></div>
-      <div class="trust-item">
-        <div class="trust-icon-box">💵</div>
-        <span class="trust-text">Cash on Delivery</span>
-      </div>
-      <div class="trust-divider"></div>
-      <div class="trust-item">
-        <div class="trust-icon-box">🏷️</div>
-        <span class="trust-text">Lowest Prices Guaranteed</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= ARCH CATEGORIES SHOWCASE ================= -->
-  <section class="categories-showcase">
-    <h2 class="section-heading">Top Categories to Explore</h2>
-    <div class="category-arch-grid">
-      
-      <div class="arch-cat-card" data-category="Ethnic Wear">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80" alt="Ethnic Wear">
-        </div>
-        <span class="arch-cat-title">Ethnic Wear</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Western">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=400&q=80" alt="Western Dresses">
-        </div>
-        <span class="arch-cat-title">Western Dresses</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Menswear">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80" alt="Menswear">
-        </div>
-        <span class="arch-cat-title">Menswear</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Footwear">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" alt="Footwear">
-        </div>
-        <span class="arch-cat-title">Footwear</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Home Decor">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=400&q=80" alt="Home Decor">
-        </div>
-        <span class="arch-cat-title">Home Decor</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Beauty">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=400&q=80" alt="Beauty">
-        </div>
-        <span class="arch-cat-title">Beauty</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Accessories">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=400&q=80" alt="Accessories">
-        </div>
-        <span class="arch-cat-title">Accessories</span>
-      </div>
-
-      <div class="arch-cat-card" data-category="Electronics">
-        <div class="arch-image-wrap">
-          <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80" alt="Electronics">
-        </div>
-        <span class="arch-cat-title">Electronics</span>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= MAIN PRODUCTS CATALOG ================= -->
+  <!-- ================= DYNAMIC PRODUCTS & LINKS SHOWCASE ================= -->
   <main class="catalog-main">
     <div class="catalog-header-bar">
       <div>
-        <h2 class="catalog-title">Products For You</h2>
-        <span class="catalog-subtitle">Clicking any product redirects directly to Meesho</span>
+        <h2 class="catalog-title">Your Meesho Link Showcase <span id="productCount" class="count-badge">0 Items</span></h2>
       </div>
-
-      <!-- Quick Filter Pills -->
-      <div class="filter-pills-row">
-        <button class="filter-pill-btn active" data-category="All">All Items</button>
-        <button class="filter-pill-btn" data-category="Ethnic Wear">Ethnic Wear</button>
-        <button class="filter-pill-btn" data-category="Western">Western</button>
-        <button class="filter-pill-btn" data-category="Menswear">Menswear</button>
-        <button class="filter-pill-btn" data-category="Footwear">Footwear</button>
-        <button class="filter-pill-btn" data-category="Beauty">Beauty</button>
-        <button class="filter-pill-btn" data-category="Electronics">Electronics</button>
-      </div>
-
-      <!-- Sort Dropdown -->
-      <div class="sort-select-wrap">
-        <label for="sortSelect" class="sort-label">Sort by:</label>
-        <select id="sortSelect" class="sort-select">
-          <option value="relevance">Relevance</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-      </div>
+      <button class="clear-all-btn" onclick="clearAllProducts()">Clear All Links</button>
     </div>
 
-    <!-- Products Grid Container -->
+    <!-- Dynamic Products Grid -->
     <div id="productsGrid" class="products-grid"></div>
   </main>
 
-  <!-- Redirection Toast Notification -->
+  <!-- Toast Notification -->
   <div id="redirectToast" class="redirect-toast">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="2">
       <circle cx="12" cy="12" r="10"></circle>
       <polyline points="12 16 16 12 12 8"></polyline>
       <line x1="8" y1="12" x2="16" y2="12"></line>
     </svg>
-    <span id="toastText" class="toast-text">Redirecting to Meesho...</span>
+    <span id="toastText" class="toast-text">Opening Meesho link...</span>
   </div>
 
-  <!-- ================= FOOTER SECTION ================= -->
+  <!-- Footer -->
   <footer class="meesho-footer">
-    <div class="footer-container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <span class="meesho-logo-text" style="font-size:26px; display:inline-block; margin-bottom:12px;">meesho<span class="meesho-logo-dot">.</span></span>
-          <p style="font-size:13px; color:#666; line-height:1.6;">
-            India's #1 Reselling & Direct Shopping Platform. Get top quality fashion, electronics, and home items at lowest factory prices.
-          </p>
-        </div>
-
-        <div class="footer-col">
-          <h4>Shop By Category</h4>
-          <ul>
-            <li><a href="https://www.meesho.com/sarees/p/1xxxx" target="_blank">Ethnic Sarees & Kurtis</a></li>
-            <li><a href="https://www.meesho.com/western-dresses/p/3xxxx" target="_blank">Women Western Dresses</a></li>
-            <li><a href="https://www.meesho.com/mens-tshirts/p/4xxxx" target="_blank">Men Fashion & T-Shirts</a></li>
-            <li><a href="https://www.meesho.com/footwear/p/5xxxx" target="_blank">Trendy Footwear</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Meesho Quick Links</h4>
-          <ul>
-            <li><a href="https://supplier.meesho.com" target="_blank">Become a Supplier</a></li>
-            <li><a href="https://www.meesho.com/investor-relations" target="_blank">Investor Relations</a></li>
-            <li><a href="https://www.meesho.com/legal/terms-conditions" target="_blank">Terms & Conditions</a></li>
-            <li><a href="https://www.meesho.com/legal/privacy-policy" target="_blank">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Reach Out To Meesho</h4>
-          <p style="font-size:13px; color:#666; line-height:1.6; margin-bottom:10px;">
-            Fashnear Technologies Private Limited,<br>
-            Bengaluru, Karnataka, India
-          </p>
-          <a href="https://www.meesho.com/contact-us" target="_blank" style="font-size:13px; font-weight:700; color:var(--meesho-pink);">Visit Meesho Help Center →</a>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>© 2026 Meesho Clone. All products and links redirect to official meesho.com.</p>
-        <p>Built for direct seamless redirection & showcase.</p>
-      </div>
-    </div>
+    <p>© 2026 Meesho Link Manager. All pasted links open directly on official meesho.com.</p>
   </footer>
 
   <script src="app.js"></script>
