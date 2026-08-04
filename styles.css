@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Meesho Section Link Showcase - Complete Stylesheet
+   Meesho Multi-Page Showcase & Link Engine - Full Stylesheet
    Brand Colors: Meesho Pink (#f43397), Deep Purple (#9f208c), Green (#038d63)
    ========================================================================== */
 
@@ -47,7 +47,7 @@ a {
 }
 
 /* ==========================================================================
-   1. TOP NAVIGATION & CATEGORY TAB BAR
+   1. TOP NAVIGATION & HEADER
    ========================================================================== */
 .meesho-header {
   position: sticky;
@@ -97,14 +97,32 @@ a {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
   transition: color 0.2s ease;
 }
 
-.nav-link:hover {
+.nav-link:hover, .nav-link.active {
   color: var(--meesho-pink);
 }
 
-/* Sub Navigation Category Bar */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: #e0e0e0;
+}
+
+.action-badge-count {
+  background: var(--meesho-pink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+/* Sub Navigation A to Z Categories Bar */
 .category-nav-bar {
   border-top: 1px solid #f0f0f0;
   border-bottom: 1px solid #f0f0f0;
@@ -126,7 +144,7 @@ a {
 }
 
 .cat-tab {
-  padding: 12px 18px;
+  padding: 12px 16px;
   font-size: 13px;
   font-weight: 600;
   color: #4a4a4a;
@@ -321,7 +339,6 @@ a {
   color: #d32f2f;
 }
 
-/* Category Section Block */
 .category-section {
   margin-bottom: 40px;
   background: #ffffff;
@@ -372,7 +389,6 @@ a {
   gap: 20px;
 }
 
-/* Individual Meesho Product Card */
 .product-card {
   background: #ffffff;
   border-radius: 12px;
@@ -512,7 +528,6 @@ a {
   background: var(--meesho-purple);
 }
 
-/* Pasted Target Meesho Link Box Underneath */
 .card-link-footer {
   background: #fdf0f7;
   border-top: 1px dashed #f7bade;
@@ -551,26 +566,253 @@ a {
   color: var(--meesho-purple);
 }
 
-/* Empty State Box */
-.empty-state-box {
+/* ==========================================================================
+   4. SUB-PAGE LAYOUTS (SUPPLIER, HELP, CART)
+   ========================================================================== */
+
+/* Supplier Page Styles */
+.supplier-hero {
+  background: linear-gradient(135deg, #6c1960 0%, #9f208c 50%, #f43397 100%);
+  color: #ffffff;
+  padding: 60px 20px;
   text-align: center;
-  padding: 50px 20px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 2px dashed #f0e0ed;
+  border-radius: 20px;
+  margin: 24px auto;
+  max-width: 1280px;
+  box-shadow: var(--shadow-lg);
 }
 
-.empty-state-box h3 {
+.supplier-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.supplier-hero p {
+  font-size: 18px;
+  max-width: 650px;
+  margin: 0 auto 28px;
+  opacity: 0.95;
+}
+
+.cta-button-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  color: var(--meesho-purple);
+  font-size: 18px;
+  font-weight: 800;
+  padding: 14px 36px;
+  border-radius: 30px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.cta-button-lg:hover {
+  background: #ffeb3b;
+  transform: translateY(-3px);
+}
+
+.feature-cards-grid {
+  max-width: 1280px;
+  margin: 40px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  background: #ffffff;
+  padding: 30px 24px;
+  border-radius: 16px;
+  border: 1px solid #eaeaea;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.feature-icon-box {
+  width: 64px;
+  height: 64px;
+  background: #fdf0f7;
+  color: var(--meesho-pink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+}
+
+.feature-card h3 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Help Page Styles */
+.help-hero {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  max-width: 1280px;
+  margin: 24px auto;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eee;
+}
+
+.help-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.faq-section {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.faq-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 18px 24px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+}
+
+.faq-answer {
+  padding: 0 24px 18px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  border-top: 1px solid #f5f5f5;
+  padding-top: 14px;
+}
+
+/* Cart / Saved Links Page Styles */
+.cart-wrapper {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cart-item-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eee;
+}
+
+.cart-item-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f0f0f5;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.cart-item-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--meesho-pink);
+}
+
+.cart-summary-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eee;
+  height: fit-content;
+}
+
+.summary-title {
   font-family: var(--font-heading);
   font-size: 18px;
-  color: #333;
+  font-weight: 800;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #666;
+}
+
+.summary-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  border-top: 1px solid #eee;
+  padding-top: 12px;
   margin-top: 12px;
 }
 
-.empty-state-box p {
-  font-size: 13px;
-  color: #666;
-  margin-top: 4px;
+.checkout-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--meesho-pink) 0%, var(--meesho-purple) 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 14px rgba(244, 51, 151, 0.3);
 }
 
 /* Toast */
@@ -603,7 +845,6 @@ a {
   color: var(--text-primary);
 }
 
-/* Footer */
 .meesho-footer {
   background: #ffffff;
   border-top: 1px solid #e5e5e5;
@@ -615,6 +856,6 @@ a {
 }
 
 @media (max-width: 900px) {
+  .cart-wrapper { grid-template-columns: 1fr; }
   .link-input-group { flex-direction: column; }
-  .optional-fields-grid { grid-template-columns: 1fr; }
 }

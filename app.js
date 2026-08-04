@@ -1,24 +1,27 @@
 /**
- * Meesho Link Extractor & Section-Based Showcase Engine
- * Exact Image Extraction from Meesho CDN (images.meesho.com), Price/Discount Parser,
- * Category Section Manager, and Persistent Showcase.
+ * Meesho Multi-Page Link Engine & Scraper
+ * Handles dynamic product listing across sections, cart management,
+ * OpenGraph metadata fetching, and page interactions.
  */
 
 const STORAGE_KEY = "meesho_section_products_v2";
 
 const CATEGORIES = [
-  { id: "Ethnic Wear", name: "Kurti, Saree & Ethnic Wear", icon: "🌸" },
+  { id: "Ethnic Wear", name: "Kurti, Saree & Lehenga", icon: "🌸" },
   { id: "Western", name: "Women Western", icon: "👗" },
-  { id: "Menswear", name: "Menswear & Grooming", icon: "👔" },
-  { id: "Beauty", name: "Beauty & Health", icon: "💄" },
-  { id: "Footwear", name: "Bags & Footwear", icon: "👠" },
+  { id: "Lingerie", name: "Lingerie & Innerwear", icon: "👙" },
+  { id: "Menswear", name: "Men Fashion & Grooming", icon: "👔" },
+  { id: "Kids", name: "Kids & Toys", icon: "🧸" },
   { id: "Home", name: "Home & Kitchen", icon: "🏠" },
+  { id: "Beauty", name: "Beauty & Health", icon: "💄" },
   { id: "Jewellery", name: "Jewellery & Accessories", icon: "💎" },
-  { id: "Electronics", name: "Electronics & Watches", icon: "⌚" },
-  { id: "Kids", name: "Kids & Toys", icon: "🧸" }
+  { id: "Footwear", name: "Bags & Footwear", icon: "👠" },
+  { id: "Electronics", name: "Electronics", icon: "⚡" },
+  { id: "Watches", name: "Watches", icon: "⌚" },
+  { id: "Sports", name: "Sports & Fitness", icon: "⚽" },
+  { id: "Car", name: "Car & Motorbike", icon: "🚗" }
 ];
 
-// Seed sample links if local storage is empty
 const INITIAL_SAMPLES = [
   {
     id: "sample-1",
@@ -65,11 +68,33 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
   setupCategorySelect();
   setupFormListeners();
+  renderCartPage();
+  setupFaqAccordion();
 });
 
-/**
- * Populate Category Dropdown in Add Link Form
- */
+function loadProducts() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { productsList = JSON.parse(saved); } catch (e) { productsList = INITIAL_SAMPLES; }
+  } else {
+    productsList = INITIAL_SAMPLES;
+    saveProducts();
+  }
+  updateNavBadge();
+  renderAllSections();
+  renderCartPage();
+}
+
+function saveProducts() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(productsList));
+  updateNavBadge();
+}
+
+function updateNavBadge() {
+  const badges = document.querySelectorAll("#cartCountNav");
+  badges.forEach(b => { b.textContent = productsList.length; });
+}
+
 function setupCategorySelect() {
   const select = document.getElementById("categorySelect");
   if (!select) return;
@@ -81,44 +106,15 @@ function setupCategorySelect() {
 }
 
 /**
- * Load products from localStorage or use initial samples
- */
-function loadProducts() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      productsList = JSON.parse(saved);
-    } catch (e) {
-      productsList = INITIAL_SAMPLES;
-    }
-  } else {
-    productsList = INITIAL_SAMPLES;
-    saveProducts();
-  }
-  renderAllSections();
-}
-
-/**
- * Save current list to localStorage
- */
-function saveProducts() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(productsList));
-}
-
-/**
- * Render Catalog grouped into Meesho Category Sections
+ * Render All Category Sections on Index Page
  */
 function renderAllSections() {
   const container = document.getElementById("sectionsContainer");
   const countBadge = document.getElementById("totalItemsCount");
   
-  if (countBadge) {
-    countBadge.textContent = `${productsList.length} Total Links`;
-  }
-
+  if (countBadge) countBadge.textContent = `${productsList.length} Total Links`;
   if (!container) return;
 
-  // Filter products by selected top category tab if any
   let displayList = productsList;
   if (activeSectionFilter !== "All") {
     displayList = productsList.filter(p => p.category === activeSectionFilter);
@@ -127,18 +123,17 @@ function renderAllSections() {
   if (displayList.length === 0) {
     container.innerHTML = `
       <div class="empty-state-box">
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="1.5">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#f43397" stroke-width="1.5">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
-        <h3>No Products Found for this Section</h3>
-        <p>Paste a Meesho product link above and select this category to list it here!</p>
+        <h3>No Links Listed for this Category</h3>
+        <p>Paste any Meesho product link above to list it under this section!</p>
       </div>
     `;
     return;
   }
 
-  // Group displayList by Category
   const grouped = {};
   CATEGORIES.forEach(cat => { grouped[cat.id] = []; });
 
@@ -148,11 +143,10 @@ function renderAllSections() {
     grouped[catId].push(item);
   });
 
-  // Render each populated section
   let html = "";
   CATEGORIES.forEach(cat => {
     const items = grouped[cat.id] || [];
-    if (items.length === 0) return; // Skip empty sections unless filtering
+    if (items.length === 0) return;
 
     html += `
       <section class="category-section" id="section-${cat.id}">
@@ -160,7 +154,7 @@ function renderAllSections() {
           <div class="section-title-left">
             <span class="sec-icon">${cat.icon}</span>
             <h2 class="sec-name">${cat.name}</h2>
-            <span class="sec-count">${items.length} ${items.length === 1 ? 'item' : 'items'}</span>
+            <span class="sec-count">${items.length} ${items.length === 1 ? 'link' : 'links'}</span>
           </div>
         </div>
 
@@ -174,11 +168,8 @@ function renderAllSections() {
   container.innerHTML = html;
 }
 
-/**
- * Render Individual Product Card with Exact Details and Target Link Display
- */
 function renderProductCard(item) {
-  const priceDisplay = item.price ? `₹${item.price}` : 'Check on Meesho';
+  const priceDisplay = item.price ? `₹${item.price}` : 'Check Price on Meesho';
   const originalPriceDisplay = item.originalPrice ? `₹${item.originalPrice}` : '';
   const discountDisplay = item.discount || (item.originalPrice && item.price ? `${Math.round((1 - item.price/item.originalPrice)*100)}% off` : '');
 
@@ -192,10 +183,8 @@ function renderProductCard(item) {
       </button>
 
       <div class="product-img-container" onclick="openLink('${escapeQuotes(item.link)}')">
-        <img src="${item.image}" alt="${escapeQuotes(item.title)}" class="product-img" 
-          loading="lazy" 
+        <img src="${item.image}" alt="${escapeQuotes(item.title)}" class="product-img" loading="lazy"
           onerror="this.src='https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80'">
-        
         <span class="category-badge-pill">${getCategoryIcon(item.category)} ${item.category}</span>
       </div>
 
@@ -217,7 +206,6 @@ function renderProductCard(item) {
         </a>
       </div>
 
-      <!-- Pasted Target Meesho Link Box Underneath -->
       <div class="card-link-footer">
         <span class="link-label">Target Meesho Link:</span>
         <div class="link-anchor-box">
@@ -235,7 +223,65 @@ function renderProductCard(item) {
 }
 
 /**
- * Handle Add Link Form Submission & Advanced Fetching
+ * Render Cart Page (cart.html)
+ */
+function renderCartPage() {
+  const cartList = document.getElementById("cartItemsList");
+  const countEl = document.getElementById("summaryCount");
+  const totalEl = document.getElementById("summaryTotal");
+
+  if (!cartList) return;
+
+  if (countEl) countEl.textContent = `${productsList.length} Items`;
+
+  let totalPrice = 0;
+  productsList.forEach(p => {
+    if (p.price) totalPrice += parseInt(p.price);
+  });
+
+  if (totalEl) totalEl.textContent = `₹${totalPrice}`;
+
+  if (productsList.length === 0) {
+    cartList.innerHTML = `
+      <div class="empty-state-box">
+        <h3>Your Saved Links List is Empty</h3>
+        <p>Return to <a href="index.html" style="color:var(--meesho-pink); font-weight:700;">Home Showcase</a> and paste Meesho links to add them here!</p>
+      </div>
+    `;
+    return;
+  }
+
+  cartList.innerHTML = productsList.map(item => `
+    <div class="cart-item-card">
+      <img src="${item.image}" alt="${escapeQuotes(item.title)}" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80'">
+      
+      <div class="cart-item-details">
+        <h4 class="cart-item-title">${item.title}</h4>
+        <span class="cart-item-price">${item.price ? '₹' + item.price : 'Target Link Saved'}</span>
+        <div style="margin-top: 6px; font-size: 12px; color: var(--meesho-pink);">
+          <a href="${item.link}" target="_blank">Open on Meesho ↗</a>
+        </div>
+      </div>
+
+      <button class="delete-card-btn" style="position:static;" onclick="deleteProduct('${item.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+/**
+ * Setup FAQ Accordions on help.html
+ */
+function setupFaqAccordion() {
+  document.querySelectorAll(".faq-question").forEach(q => {
+    q.addEventListener("click", () => {
+      const card = q.parentElement;
+      card.classList.toggle("open");
+    });
+  });
+}
+
+/**
+ * Form Listener & Fetcher
  */
 function setupFormListeners() {
   const form = document.getElementById("addLinkForm");
@@ -258,7 +304,6 @@ function setupFormListeners() {
     const customImage = document.getElementById("customImageInput")?.value.trim();
     const selectedCat = document.getElementById("categorySelect")?.value;
 
-    // Advanced fetcher
     let fetchedData = await fetchExactMeeshoData(url);
 
     const finalTitle = customTitle || fetchedData.title || extractTitleFromUrl(url);
@@ -274,30 +319,23 @@ function setupFormListeners() {
       price: fetchedData.price || null,
       originalPrice: fetchedData.originalPrice || null,
       discount: fetchedData.discount || null,
-      rating: fetchedData.rating || 4.2,
       addedAt: Date.now()
     };
 
     productsList.unshift(newProduct);
     saveProducts();
     renderAllSections();
+    renderCartPage();
 
-    // Reset inputs
     linkInput.value = "";
     if (document.getElementById("customTitleInput")) document.getElementById("customTitleInput").value = "";
     if (document.getElementById("customImageInput")) document.getElementById("customImageInput").value = "";
 
     showStatus(`Product added successfully to ${category} section!`, "success");
     showToast(`Added to ${category} section!`);
-
-    // Scroll smoothly to section
-    const targetSec = document.getElementById(`section-${category}`);
-    if (targetSec) {
-      targetSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
   });
 
-  // Setup Section Tab Filter Buttons
+  // Tab filters
   document.querySelectorAll('[data-sec-tab]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('[data-sec-tab]').forEach(b => b.classList.remove('active'));
@@ -308,9 +346,6 @@ function setupFormListeners() {
   });
 }
 
-/**
- * Advanced Multi-Proxy Scraper to Extract Exact images.meesho.com Image & JSON-LD Data
- */
 async function fetchExactMeeshoData(meeshoUrl) {
   const proxies = [
     `https://api.allorigins.win/get?url=${encodeURIComponent(meeshoUrl)}`,
@@ -324,7 +359,6 @@ async function fetchExactMeeshoData(meeshoUrl) {
       const resp = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
       if (resp.ok) {
         const text = await resp.text();
-        // If allorigins wrapper
         if (proxy.includes("allorigins")) {
           const json = JSON.parse(text);
           rawHtml = json.contents || "";
@@ -333,26 +367,16 @@ async function fetchExactMeeshoData(meeshoUrl) {
         }
         if (rawHtml.length > 500) break;
       }
-    } catch (err) {
-      console.warn("Proxy attempt failed:", proxy, err);
-    }
+    } catch (err) {}
   }
 
-  let extracted = {
-    title: null,
-    image: null,
-    price: null,
-    originalPrice: null,
-    discount: null
-  };
-
+  let extracted = { title: null, image: null, price: null, originalPrice: null, discount: null };
   if (!rawHtml) return extracted;
 
   try {
     const parser = new DOMParser();
     const doc = parser.parseFromString(rawHtml, "text/html");
 
-    // 1. Try images.meesho.com CDN URLs directly from HTML or Meta
     const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
                     doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content");
 
@@ -360,83 +384,35 @@ async function fetchExactMeeshoData(meeshoUrl) {
       extracted.image = ogImage;
     }
 
-    // Direct regex match for images.meesho.com in rawHtml if ogImage failed
     if (!extracted.image) {
       const meeshoCdnMatch = rawHtml.match(/https:\/\/images\.meesho\.com\/images\/products\/[^\s"'<>]+\.(jpg|jpeg|png|webp)/i);
-      if (meeshoCdnMatch) {
-        extracted.image = meeshoCdnMatch[0];
-      }
+      if (meeshoCdnMatch) extracted.image = meeshoCdnMatch[0];
     }
 
-    // 2. Extract Title
     const ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute("content") || doc.title;
     if (ogTitle) {
       extracted.title = ogTitle.replace(/\| Meesho.*/i, '').replace(/Buy /i, '').trim();
     }
 
-    // 3. Extract JSON-LD / __NEXT_DATA__ for Price & Discount
-    const jsonLdScripts = doc.querySelectorAll('script[type="application/ld+json"]');
-    jsonLdScripts.forEach(script => {
-      try {
-        const json = JSON.parse(script.textContent);
-        if (json.name && !extracted.title) extracted.title = json.name;
-        if (json.image && !extracted.image) {
-          extracted.image = Array.isArray(json.image) ? json.image[0] : json.image;
-        }
-        if (json.offers && json.offers.price) {
-          extracted.price = parseInt(json.offers.price);
-        }
-      } catch (e) {}
-    });
-
-    // Extract Price Regex if JSON-LD missed
-    if (!extracted.price) {
-      const priceMatch = rawHtml.match(/"price":\s*"?(\d+)"?/i) || rawHtml.match(/₹\s*(\d+)/);
-      if (priceMatch) extracted.price = parseInt(priceMatch[1]);
-    }
-
-  } catch (err) {
-    console.error("DOM Parsing error:", err);
-  }
+    const priceMatch = rawHtml.match(/"price":\s*"?(\d+)"?/i) || rawHtml.match(/₹\s*(\d+)/);
+    if (priceMatch) extracted.price = parseInt(priceMatch[1]);
+  } catch (e) {}
 
   return extracted;
 }
 
-/**
- * Auto-detect Category Section from Title or URL
- */
 function autoDetectCategory(title = "", url = "") {
   const text = (title + " " + url).toLowerCase();
-
-  if (text.includes("face wash") || text.includes("skin") || text.includes("beauty") || text.includes("makeup") || text.includes("serum") || text.includes("shampoo") || text.includes("cream")) {
-    return "Beauty";
-  }
-  if (text.includes("saree") || text.includes("kurti") || text.includes("ethnic") || text.includes("lehenga") || text.includes("dupatta") || text.includes("suit")) {
-    return "Ethnic Wear";
-  }
-  if (text.includes("dress") || text.includes("top") || text.includes("skirt") || text.includes("western") || text.includes("gown")) {
-    return "Western";
-  }
-  if (text.includes("tshirt") || text.includes("t-shirt") || text.includes("shirt") || text.includes("men") || text.includes("jeans") || text.includes("trouser") || text.includes("grooming")) {
-    return "Menswear";
-  }
-  if (text.includes("shoe") || text.includes("sneaker") || text.includes("sandal") || text.includes("heel") || text.includes("footwear") || text.includes("bag") || text.includes("handbag")) {
-    return "Footwear";
-  }
-  if (text.includes("decor") || text.includes("home") || text.includes("kitchen") || text.includes("vase") || text.includes("curtain") || text.includes("bedsheet") || text.includes("bottle")) {
-    return "Home";
-  }
-  if (text.includes("jewel") || text.includes("necklace") || text.includes("ring") || text.includes("earring")) {
-    return "Jewellery";
-  }
-  if (text.includes("watch") || text.includes("smartwatch") || text.includes("earphone") || text.includes("headphone") || text.includes("electronic") || text.includes("phone")) {
-    return "Electronics";
-  }
-  if (text.includes("toy") || text.includes("kids") || text.includes("baby") || text.includes("doll")) {
-    return "Kids";
-  }
-
-  return "Ethnic Wear"; // Default fallback
+  if (text.includes("face wash") || text.includes("skin") || text.includes("beauty") || text.includes("cream")) return "Beauty";
+  if (text.includes("saree") || text.includes("kurti") || text.includes("ethnic") || text.includes("lehenga")) return "Ethnic Wear";
+  if (text.includes("dress") || text.includes("top") || text.includes("western")) return "Western";
+  if (text.includes("tshirt") || text.includes("shirt") || text.includes("men")) return "Menswear";
+  if (text.includes("shoe") || text.includes("sneaker") || text.includes("footwear") || text.includes("bag")) return "Footwear";
+  if (text.includes("decor") || text.includes("home") || text.includes("kitchen")) return "Home";
+  if (text.includes("jewel") || text.includes("ring")) return "Jewellery";
+  if (text.includes("watch") || text.includes("phone") || text.includes("electronic")) return "Electronics";
+  if (text.includes("toy") || text.includes("kids")) return "Kids";
+  return "Ethnic Wear";
 }
 
 function extractTitleFromUrl(url) {
@@ -453,13 +429,8 @@ function extractTitleFromUrl(url) {
 
 function getRandomMeeshoProductImage(keyword = '') {
   const kw = keyword.toLowerCase();
-  if (kw.includes('face') || kw.includes('beauty') || kw.includes('wash')) {
-    return 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80';
-  } else if (kw.includes('saree') || kw.includes('kurti')) {
-    return 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80';
-  } else if (kw.includes('shirt') || kw.includes('men')) {
-    return 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80';
-  }
+  if (kw.includes('face') || kw.includes('beauty')) return 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80';
+  if (kw.includes('saree') || kw.includes('kurti')) return 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80';
   return 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80';
 }
 
@@ -472,6 +443,7 @@ function deleteProduct(id) {
   productsList = productsList.filter(p => p.id !== id);
   saveProducts();
   renderAllSections();
+  renderCartPage();
   showToast("Link deleted.");
 }
 
@@ -480,13 +452,12 @@ function clearAllProducts() {
     productsList = [];
     saveProducts();
     renderAllSections();
+    renderCartPage();
     showToast("All links cleared.");
   }
 }
 
-function openLink(url) {
-  window.open(url, '_blank');
-}
+function openLink(url) { window.open(url, '_blank'); }
 
 function showStatus(msg, type) {
   const el = document.getElementById("statusMessage");
@@ -502,9 +473,7 @@ function showToast(message) {
   if (toast && toastText) {
     toastText.textContent = message;
     toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
   }
 }
 

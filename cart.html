@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Meesho Links & Checkout Cart</title>
+  <meta name="description" content="View your saved Meesho product links and proceed directly to purchase on meesho.com.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="https://www.meesho.com/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="meesho-header">
+    <div class="header-top">
+      <a href="index.html" class="logo-container">
+        <span class="meesho-logo-text">meesho<span class="meesho-logo-dot">.</span></span>
+      </a>
+
+      <div class="header-actions">
+        <a href="index.html" class="nav-link">Home Showcase</a>
+        <a href="supplier.html" class="nav-link">Become a Supplier</a>
+        <a href="help.html" class="nav-link">Help Center</a>
+        <a href="cart.html" class="nav-link active">Saved Links <span id="cartCountNav" class="action-badge-count">0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cart Container -->
+  <main class="cart-wrapper">
+    <!-- Left: Cart Items List -->
+    <div class="cart-items-list" id="cartItemsList">
+      <!-- Populated dynamically via JS -->
+    </div>
+
+    <!-- Right: Summary Card -->
+    <div class="cart-summary-card">
+      <h3 class="summary-title">Summary & Checkout</h3>
+
+      <div class="summary-row">
+        <span>Saved Items</span>
+        <span id="summaryCount">0</span>
+      </div>
+
+      <div class="summary-row">
+        <span>Delivery Charge</span>
+        <span style="color: var(--meesho-green); font-weight: 700;">FREE</span>
+      </div>
+
+      <div class="summary-total">
+        <div class="summary-row" style="margin: 0; color: inherit;">
+          <span>Estimated Total</span>
+          <span id="summaryTotal">₹0</span>
+        </div>
+      </div>
+
+      <a href="https://www.meesho.com/cart" target="_blank" class="checkout-btn">
+        Proceed to Checkout on Meesho ↗
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="meesho-footer">
+    <p>© 2026 Meesho Saved Links Cart. All product links redirect to official meesho.com.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
